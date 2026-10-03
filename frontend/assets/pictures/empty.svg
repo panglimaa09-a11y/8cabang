@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
+  <!-- empty box with egg -->
+  <g fill="none" stroke="#94a3b8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M30 70l20-18h60l20 18v50a8 8 0 0 1-8 8H38a8 8 0 0 1-8-8z"/>
+    <path d="M30 70l10 10h80l10-10"/>
+    <path d="M80 52v28" stroke-dasharray="2 8"/>
+  </g>
+  <g>
+    <path d="M80 62c-7 0-12 8-12 16 0 6.5 5 11 12 11s12-4.5 12-11c0-8-5-16-12-16z" fill="#e2e8f0"/>
+    <circle cx="80" cy="76" r="6" fill="#cbd5e1"/>
+  </g>
+  <g fill="#cbd5e1">
+    <circle cx="36" cy="140" r="3"/>
+    <circle cx="124" cy="140" r="3"/>
+    <circle cx="80" cy="146" r="3"/>
+  </g>
+</svg>

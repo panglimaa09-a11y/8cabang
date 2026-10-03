@@ -1,0 +1,32 @@
+services:
+  app:
+    build: .
+    container_name: telur-app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      # Untuk dev lokal dengan service db di bawah, override via .env:
+      # DATABASE_URL=postgresql+psycopg2://telur:telur@db:5432/telur
+      JWT_EXPIRE_MINUTES: 720
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  # Database lokal HANYA untuk pengembangan. Production memakai Supabase.
+  db:
+    image: postgres:16-alpine
+    container_name: telur-db
+    profiles: ["dev"]
+    environment:
+      POSTGRES_USER: telur
+      POSTGRES_PASSWORD: telur
+      POSTGRES_DB: telur
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+volumes:
+  postgres-data:

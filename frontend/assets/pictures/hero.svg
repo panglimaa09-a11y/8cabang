@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="42%" r="55%">
+      <stop offset="0%" stop-color="#2b875c" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#2b875c" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="100" cy="92" r="80" fill="url(#glow)"/>
+  <!-- egg carton -->
+  <ellipse cx="100" cy="158" rx="62" ry="16" fill="#0b3d2e"/>
+  <rect x="44" y="138" width="112" height="22" rx="8" fill="#124632"/>
+  <!-- eggs -->
+  <g>
+    <path d="M70 138c-8 0-13 9-13 18 0 7 5.5 12 13 12s13-5 13-12c0-9-5-18-13-18z" fill="#f3ede0"/>
+    <path d="M100 130c-8 0-13 9-13 18 0 7 5.5 12 13 12s13-5 13-12c0-9-5-18-13-18z" fill="#faf6ec"/>
+    <path d="M130 138c-8 0-13 9-13 18 0 7 5.5 12 13 12s13-5 13-12c0-9-5-18-13-18z" fill="#f3ede0"/>
+  </g>
+  <!-- big hero egg with yolk -->
+  <g>
+    <path d="M100 18c-16 0-27 19-27 40 0 15 11.5 27 27 27s27-12 27-27c0-21-11-40-27-40z" fill="#fffdf7"/>
+    <path d="M100 18c-16 0-27 19-27 40 0 15 11.5 27 27 27s27-12 27-27c0-21-11-40-27-40z" fill="none" stroke="#0b3d2e" stroke-width="4"/>
+    <circle cx="100" cy="62" r="15" fill="#eeb31e"/>
+    <circle cx="95" cy="57" r="5" fill="#f5c445"/>
+  </g>
+  <!-- sparkles -->
+  <g fill="#eeb31e">
+    <circle cx="48" cy="52" r="3"/>
+    <circle cx="152" cy="60" r="4"/>
+    <circle cx="160" cy="110" r="2.5"/>
+    <circle cx="42" cy="105" r="2.5"/>
+  </g>
+</svg>

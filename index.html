@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sistem Manajemen Penjualan Telur 8 Cabang">
+  <title>Manajemen Penjualan Telur — 8 Cabang</title>
+  <link rel="icon" type="image/svg+xml" href="frontend/assets/logo.svg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            pine: {
+              50:  '#eef7f2',
+              100: '#d7ecdf',
+              200: '#b0d9c1',
+              300: '#7fbf9d',
+              400: '#4da377',
+              500: '#2b875c',
+              600: '#1d6c49',
+              700: '#17573c',
+              800: '#124632',
+              900: '#0b3d2e',
+              950: '#062a20'
+            },
+            yolk: {
+              400: '#f5c445',
+              500: '#eeb31e'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="frontend/css/app.css">
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased">
+  <div id="app"></div>
+  <div id="toast-root" class="fixed bottom-4 right-4 z-[100] flex flex-col gap-2 items-end"></div>
+  <script type="module" src="frontend/js/app.js"></script>
+</body>
+</html>

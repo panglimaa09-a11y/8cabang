@@ -1,0 +1,155 @@
+/* Custom styles — Sistem Manajemen Penjualan Telur 8 Cabang
+   Theme: dark green (#0b3d2e / pine-900). Tailwind handles utilities;
+   this file covers tables, cards, badges, skeleton, drawer, print. */
+
+:root {
+  --pine-900: #0b3d2e;
+  --pine-800: #124632;
+  --pine-950: #062a20;
+}
+
+html { scroll-behavior: smooth; }
+body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+
+/* ---------- Cards ---------- */
+.card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 2px rgba(6, 42, 32, 0.06);
+}
+.card-pad { padding: 1rem; }
+@media (min-width: 768px) { .card-pad { padding: 1.25rem; } }
+
+.kpi-card { position: relative; overflow: hidden; }
+.kpi-card::after {
+  content: "";
+  position: absolute; inset: 0 auto 0 0; width: 4px;
+  background: linear-gradient(180deg, #2b875c, #0b3d2e);
+}
+
+/* ---------- Tables ---------- */
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 0.5rem; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; min-width: 640px; }
+.data-table thead th {
+  background: var(--pine-900); color: #fff; font-weight: 600;
+  text-align: left; padding: 0.65rem 0.75rem; white-space: nowrap;
+  position: sticky; top: 0;
+}
+.data-table thead th:first-child { border-top-left-radius: 0.5rem; }
+.data-table thead th:last-child { border-top-right-radius: 0.5rem; }
+.data-table tbody td { padding: 0.6rem 0.75rem; border-bottom: 1px solid #eef2f0; vertical-align: top; }
+.data-table tbody tr:nth-child(even) { background: #f7faf8; }
+.data-table tbody tr:hover { background: #eef7f2; }
+.data-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* ---------- Badges ---------- */
+.badge {
+  display: inline-flex; align-items: center; gap: 0.25rem;
+  font-size: 0.72rem; font-weight: 600; line-height: 1;
+  padding: 0.3rem 0.55rem; border-radius: 9999px; white-space: nowrap;
+}
+.badge-green  { background: #dcfce7; color: #166534; }
+.badge-amber  { background: #fef3c7; color: #92400e; }
+.badge-red    { background: #fee2e2; color: #991b1b; }
+.badge-slate  { background: #e2e8f0; color: #475569; }
+.badge-blue   { background: #dbeafe; color: #1e40af; }
+
+/* ---------- Forms ---------- */
+.field-label { display: block; font-size: 0.8rem; font-weight: 600; color: #334155; margin-bottom: 0.3rem; }
+.field-input, .field-select {
+  width: 100%; border: 1px solid #cbd5e1; border-radius: 0.5rem;
+  padding: 0.55rem 0.75rem; font-size: 0.9rem; background: #fff; color: #0f172a;
+}
+.field-input:focus, .field-select:focus {
+  outline: 2px solid #2b875c; outline-offset: 0; border-color: #2b875c;
+}
+.field-input::placeholder { color: #94a3b8; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  font-weight: 600; font-size: 0.875rem; border-radius: 0.5rem;
+  padding: 0.6rem 1.1rem; cursor: pointer; border: 1px solid transparent;
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn-primary { background: var(--pine-900); color: #fff; }
+.btn-primary:hover { background: var(--pine-800); }
+.btn-accent { background: #eeb31e; color: #3f2d04; }
+.btn-accent:hover { background: #f5c445; }
+.btn-danger { background: #b91c1c; color: #fff; }
+.btn-danger:hover { background: #991b1b; }
+.btn-ghost { background: #fff; border-color: #cbd5e1; color: #334155; }
+.btn-ghost:hover { background: #f1f5f9; }
+.btn-sm { padding: 0.35rem 0.7rem; font-size: 0.78rem; }
+
+/* ---------- Sidebar / drawer ---------- */
+#sidebar { transition: transform 0.25s ease; }
+.nav-link {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.6rem 0.8rem; border-radius: 0.5rem;
+  color: #d7ecdf; font-size: 0.9rem; font-weight: 500;
+}
+.nav-link:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.nav-link.active { background: #eeb31e; color: #3f2d04; font-weight: 700; }
+.nav-link img.nav-icon { width: 1.25rem; height: 1.25rem; flex: none; }
+.nav-section {
+  font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: #7fbf9d; font-weight: 700; padding: 0.9rem 0.8rem 0.3rem;
+}
+
+/* ---------- Skeleton loading ---------- */
+.skeleton {
+  position: relative; overflow: hidden; background: #e8eef0; border-radius: 0.5rem;
+  min-height: 1rem;
+}
+.skeleton::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent);
+  animation: shimmer 1.2s infinite;
+}
+@keyframes shimmer { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+
+/* ---------- Toast ---------- */
+.toast {
+  max-width: 22rem; border-radius: 0.6rem; padding: 0.7rem 0.9rem;
+  font-size: 0.85rem; font-weight: 500; color: #fff;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  animation: toast-in 0.25s ease;
+}
+.toast-success { background: #166534; }
+.toast-error   { background: #991b1b; }
+.toast-info    { background: #1e40af; }
+@keyframes toast-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* ---------- Misc ---------- */
+.alert { border-radius: 0.6rem; padding: 0.75rem 1rem; font-size: 0.875rem; }
+.alert-error { background: #fee2e2; color: #7f1d1d; border: 1px solid #fecaca; }
+.alert-info  { background: #dbeafe; color: #1e3a8a; border: 1px solid #bfdbfe; }
+.alert-warn  { background: #fef3c7; color: #78350f; border: 1px solid #fde68a; }
+
+.chart-box { position: relative; width: 100%; height: 260px; }
+.chart-box canvas { width: 100%; height: 100%; display: block; }
+
+.login-bg {
+  background:
+    radial-gradient(60rem 30rem at 20% -10%, rgba(43,135,92,0.35), transparent),
+    radial-gradient(40rem 24rem at 110% 110%, rgba(238,179,30,0.18), transparent),
+    linear-gradient(160deg, #062a20 0%, #0b3d2e 60%, #124632 100%);
+}
+
+.stat-num { font-variant-numeric: tabular-nums; }
+
+/* Thin scrollbars for table wrappers */
+.table-wrap::-webkit-scrollbar { height: 8px; }
+.table-wrap::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+
+/* ---------- Print: reports only ---------- */
+@media print {
+  #sidebar, #topbar, #drawer-overlay, .no-print, #toast-root { display: none !important; }
+  body { background: #fff; }
+  #view { margin: 0 !important; padding: 0 !important; }
+  .card { box-shadow: none; break-inside: avoid; }
+  .data-table { min-width: 0; font-size: 11px; }
+}
