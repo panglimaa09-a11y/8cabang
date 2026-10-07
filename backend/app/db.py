@@ -6,6 +6,7 @@ NOT pool connections itself. We use NullPool and let Supabase Supavisor
 unnecessary with NullPool (every checkout opens a fresh connection) and only
 adds one roundtrip per request.
 """
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.pool import NullPool
