@@ -21,10 +21,13 @@ class Settings(BaseSettings):
     BOOTSTRAP_OWNER_PASSWORD: str = ""
 
     ALLOW_NEGATIVE_STOCK: bool = False
-    CORS_ORIGINS: str = "*"
+    # Default aman: hanya domain produksi. Tambah origin lain lewat env
+    # CORS_ORIGINS (pisah koma) — jangan kembalikan ke "*".
+    CORS_ORIGINS: str = "https://8cabang.vercel.app"
     FRONTEND_DIR: str = "/srv/app"  # dir containing index.html (Docker); local: repo root
     APP_VERSION: str = "2.0.0"
     DB_AUTO_CREATE: bool = False  # dev convenience only; production uses migrations
+    DOCS_ENABLED: bool = False  # /docs, /redoc, /openapi.json mati secara default
 
     @property
     def cors_origins(self) -> list[str]:
