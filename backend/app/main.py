@@ -33,8 +33,12 @@ async def lifespan(app: FastAPI):
     yield
 
 
+_docs_on = settings.DOCS_ENABLED
 app = FastAPI(title="Sistem Manajemen Penjualan Telur 8 Cabang",
-              version=settings.APP_VERSION, lifespan=lifespan)
+              version=settings.APP_VERSION, lifespan=lifespan,
+              docs_url="/docs" if _docs_on else None,
+              redoc_url="/redoc" if _docs_on else None,
+              openapi_url="/openapi.json" if _docs_on else None)
 
 app.add_middleware(
     CORSMiddleware,
@@ -44,7 +48,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── API routers ───────────────────────────────────────────────────
+# API routers
 app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(branches.router)
@@ -93,7 +97,7 @@ def _bootstrap_owner() -> None:
         session.close()
 
 
-# ── Static frontend (served last so /api routes win) ──────────────
+# Static frontend (served last so /api routes win)
 FRONTEND_DIR = settings.FRONTEND_DIR
 if os.path.isdir(FRONTEND_DIR):
     app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
