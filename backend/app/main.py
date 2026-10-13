@@ -18,7 +18,7 @@ from contextlib import asynccontextmanager
 
 from . import db as db_module
 from .api import (
-    audit, auth, branches, expenses, purchases, reports, returns,
+    audit, auth, branches, dashboard, expenses, purchases, reports, returns,
     sales, stocktakes, transactions, transfers, users,
 )
 from .config import settings
@@ -48,7 +48,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# API routers
+# ── API routers ───────────────────────────────────────────────────
 app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(branches.router)
@@ -60,6 +60,7 @@ app.include_router(stocktakes.router)
 app.include_router(transfers.router)
 app.include_router(transactions.router)
 app.include_router(reports.router)
+app.include_router(dashboard.router)
 app.include_router(audit.router)
 
 
@@ -97,7 +98,7 @@ def _bootstrap_owner() -> None:
         session.close()
 
 
-# Static frontend (served last so /api routes win)
+# ── Static frontend (served last so /api routes win) ──────────────
 FRONTEND_DIR = settings.FRONTEND_DIR
 if os.path.isdir(FRONTEND_DIR):
     app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
