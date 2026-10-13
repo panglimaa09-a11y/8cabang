@@ -69,7 +69,7 @@ def dashboard_summary(
     by_id = {b.id: b for b in branches}
     ids = [b.id for b in branches]
     n = len(ids)
-    date_conds_sales = _date_conds(SalesTransaction.created_at, from_, to_)
+    date_conds_sales = _date_conds(SalesTransaction.created_at, from_, to)
 
     # 1) Sales aggregates per branch: revenue_net + cash_in.
     sales_rows = _grouped(db.execute(
