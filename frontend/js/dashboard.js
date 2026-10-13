@@ -1,6 +1,6 @@
 // Owner dashboard: 8 branch cards, KPIs, pure-canvas bar chart, low stock, recent txns.
 import { api } from "./api.js";
-import { myBranches, isOwner } from "./auth.js";
+import { isOwner } from "./auth.js";
 import {
   fmtRp, fmtRpShort, fmtNum, fmtDateTime, esc, skeletonCards, skeletonRows,
   emptyState, errorAlert, statusBadge,
@@ -52,22 +52,33 @@ export async function renderDashboard(container) {
       </table></div>
     </div>`;
 
-  const branches = await myBranches();
-  if (owner) {
-    const sel = container.querySelector("#flt-branch");
-    branches.forEach((b) => {
-      const o = document.createElement("option");
-      o.value = b.code; o.textContent = `${b.code} — ${b.name || ""}`;
-      sel.appendChild(o);
-    });
-  }
-
+  // Satu request ke /api/dashboard/summary menggantikan pola lama:
+  // 1x /reports/consolidated (~80 query DB berurutan) + 8x /branches/{id}/summary
+  // (masing-masing cold start serverless + ~15 query).
   async function load() {
     const from = container.querySelector("#flt-from").value;
     const to = container.querySelector("#flt-to").value;
+    const data = await api.get("/dashboard/summary", {
+      params: { from: from || undefined, to: to || undefined },
+    });
+    const owner = !!data.owner;
+    if (owner) {
+      // Opsi filter cabang dari data yang sama — tanpa request /branches tambahan.
+      const sel = container.querySelector("#flt-branch");
+      if (!sel.dataset.populated) {
+        const keep = sel.value;
+        data.branches.forEach((b) => {
+          const o = document.createElement("option");
+          o.value = b.code; o.textContent = `${b.code} — ${b.name || ""}`;
+          sel.appendChild(o);
+        });
+        sel.value = keep;
+        sel.dataset.populated = "1";
+      }
+    }
     const branchCode = owner ? container.querySelector("#flt-branch").value : "";
     try {
-      await loadData(container, { from, to, branchCode, branches, owner });
+      await loadData(container, { branchCode, data, owner });
     } catch (err) {
       container.querySelector("#kpi-grid").innerHTML =
         `<div class="col-span-full">${errorAlert(err.message)}</div>`;
@@ -80,33 +91,31 @@ export async function renderDashboard(container) {
   return () => { if (chartCleanup) chartCleanup(); };
 }
 
-async function loadData(container, { from, to, branchCode, branches, owner }) {
-  const params = { from: from || undefined, to: to || undefined };
+async function loadData(container, { branchCode, data, owner }) {
   const scoped = branchCode
-    ? branches.filter((b) => b.code === branchCode)
-    : branches;
+    ? data.branches.filter((b) => b.code === branchCode)
+    : data.branches;
 
-  // Owner consolidated report: per-branch + combined totals (profit KPIs).
-  let consolidated = null;
-  if (owner) {
-    try {
-      consolidated = await api.get("/reports/consolidated", { params });
-    } catch (e) {
-      consolidated = null; // fall back to per-branch summaries
-    }
-  }
-
-  // Per-branch summaries (sales, cash, inventory value, low stock, recent).
-  const summaries = await Promise.all(
-    scoped.map(async (b) => {
-      try {
-        const s = await api.get(`/branches/${b.id}/summary`, { params });
-        return { branch: b, summary: s };
-      } catch (e) {
-        return { branch: b, summary: null, error: e.message };
-      }
-    })
-  );
+  // Bentuk data disesuaikan ke format lama agar fungsi render tidak berubah.
+  const summaries = scoped.map((b) => ({
+    branch: { id: b.id, code: b.code, name: b.name },
+    summary: {
+      totals: {
+        sales: b.sales, cash_in: b.cash_in, cash_out: b.cash_out,
+        inventory_value: b.inventory_value, cogs: b.cogs ?? 0,
+      },
+      low_stock: b.low_stock,
+      recent: b.recent,
+    },
+  }));
+  const t = data.totals;
+  const consolidated = owner ? {
+    branches: data.branches.map((b) => ({ code: b.code, sales: b.sales, total_sales: b.sales })),
+    totals: {
+      revenue_net: t.sales, cogs: t.cogs, net_profit: t.net_profit,
+      margin_pct: t.margin_pct,
+    },
+  } : null;
 
   renderKpis(container, { consolidated, summaries, owner });
   renderBranchCards(container, summaries, consolidated);
