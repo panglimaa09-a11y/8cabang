@@ -4,13 +4,14 @@ from decimal import Decimal
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import JSONResponse
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ..common import (
     get_idempotency_key, lookup_idempotency, new_txn_no, store_idempotency,
     unit_factor, write_audit,
 )
-from ..models import Product, Profile, SalesItem, SalesTransaction
+from ..models import InventoryBalance, Product, Profile, SalesItem, SalesTransaction
 from ..schemas import SaleCreate, TxnOut
 from ..security.auth import get_current_user, get_db, require_branch_access
 from ..services import accounting as acct
@@ -18,6 +19,31 @@ from ..services.costing import cogs_for_sale, money, qty
 from ..services.inventory import NegativeStockError, get_balance_for_update, post_movement
 
 router = APIRouter(prefix="/api", tags=["sales"])
+
+
+def _fmt_qty_id(v) -> str:
+    """Format jumlah ala Indonesia: 8000 -> '8.000', 1500.5 -> '1.500,5'."""
+    s = f"{Decimal(str(v)):,.4f}"
+    s = s.replace(",", "X").replace(".", ",").replace("X", ".")
+    return s.rstrip("0").rstrip(",")
+
+
+def _friendly_stock_error(db: Session, branch_id, product_id, qty_base) -> str:
+    """Pesan stok-kurang yang dimengerti user: Bahasa Indonesia, tanpa UUID."""
+    product = db.get(Product, product_id)
+    name = product.name if product else "Produk"
+    unit = product.base_unit if product else "butir"
+    bal = db.scalar(
+        select(InventoryBalance).where(
+            InventoryBalance.branch_id == branch_id,
+            InventoryBalance.product_id == product_id))
+    have = Decimal(str(bal.qty_base)) if bal else Decimal("0")
+    return (
+        f"Stok {name} tidak mencukupi: tersedia {_fmt_qty_id(have)} {unit}, "
+        f"dibutuhkan {_fmt_qty_id(qty_base)} {unit}. "
+        f"Catat stok masuk (menu Pembelian Stok, lalu tekan Terima) "
+        f"sebelum membuat penjualan."
+    )
 
 
 @router.post("/sales", status_code=status.HTTP_201_CREATED)
@@ -96,7 +122,10 @@ def create_sale(payload: SaleCreate, request: Request,
             # Roll back EVERYTHING: no partial sale, no fake success.
             db.rollback()
             raise HTTPException(status_code=status.HTTP_409_CONFLICT,
-                                detail=str(exc)) from exc
+                                detail=_friendly_stock_error(
+                                    db, payload.branch_id,
+                                    line["product_id"],
+                                    line["qty_base"])) from exc
 
     acct.post_journal(
         db, branch_id=payload.branch_id, entry_date=date.today(),
